@@ -1,0 +1,26 @@
+name: Deploy DAGs
+
+on:
+  push:
+    branches:
+      - main  # или ваша основная ветка
+    paths:
+      - 'dags/**'  # Запускать только при изменениях в папке с DAG файлами
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Copy DAGs to Airflow server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}  # IP адрес вашего сервера
+          username: ${{ secrets.SSH_USERNAME }}  # Имя пользователя для SSH
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  # Приватный ключ SSH
+          port: 22
+          source: "dags/*"  # Папка с DAG файлами
+          target: "/path/to/your/airflow/dags/"  # Путь на сервере
