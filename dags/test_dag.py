@@ -17,6 +17,7 @@ def s3_conn_test():
     file.seek(0)
 
     connection = BaseHook.get_connection('conn_s3')
+    print(connection)
     s3_client = s3.client(
         's3',
         endpoint_url=connection.host,
@@ -34,16 +35,18 @@ def s3_conn_test():
 def pg_conn_test():
     connection = BaseHook.get_connection('conn_pg')
 
+    print(connection)
+
     with pg.connect(
-        dbname=connection.database,
+        dbname='etl',
         sslmode='disable',
         user=connection.login,
         password=connection.password,
         host=connection.host,
         port=connection.port,
-        connect_timeout=60,
-        keepalives_idle=60,
-        tcp_user_timeout=60
+        connect_timeout=600,
+        keepalives_idle=600,
+        tcp_user_timeout=600
     ) as conn:
         cursor = conn.cursor()
         cursor.execute("INSERT INTO test_table VALUES ('test', 1)")
@@ -52,8 +55,10 @@ def pg_conn_test():
 
 with DAG(
     dag_id="test_dag",
-    schedule='@daily',
-    start_date=datetime(2024, 8, 1)
+    schedule='@once',
+    start_date=datetime(2024, 8, 1),
+    max_active_runs=1,
+    max_active_tasks=1
 ) as dag:
     dag_start = EmptyOperator(task_id='dag_start')
     dag_end = EmptyOperator(task_id='dag_end')
