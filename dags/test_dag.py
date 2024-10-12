@@ -3,6 +3,7 @@ from io import BytesIO
 
 import psycopg2 as pg
 import boto3 as s3
+from botocore.client import Config
 
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -22,7 +23,8 @@ def s3_conn_test():
         's3',
         endpoint_url=connection.host,
         aws_access_key_id=connection.login,
-        aws_secret_access_key=connection.password
+        aws_secret_access_key=connection.password,
+        config=Config(signature_version="s3v4"),
     )
 
     s3_client.put_object(
