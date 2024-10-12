@@ -67,7 +67,7 @@ with DAG(
 
     pip_list = BashOperator(
         task_id='pip_list',
-        bash_command='pip list',
+        bash_command='airflow config get-value core executor',
     )
 
     pg_conn_test = PythonOperator(
