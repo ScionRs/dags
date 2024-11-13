@@ -9,7 +9,7 @@ DEFAULT_ARGS = {
     'owner': 'admin',
     'retries': 2,
     'retry_delay': 600,
-    'start_date': datetime(2024, 9, 1),
+    'start_date': datetime(2024, 11, 12),
 }
 
 API_URL = "https://b2b.itresume.ru/api/statistics"
