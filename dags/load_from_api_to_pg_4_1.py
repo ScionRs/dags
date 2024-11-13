@@ -50,7 +50,7 @@ def load_from_api(**context):
             row = []
             passback_params = ast.literal_eval(el.get('passback_params', '{}'))
             row.append(el.get('lti_user_id'))
-            row.append(el.get('is_correct'))
+            row.append(True if el.get('is_correct') == 1 else False)
             row.append(el.get('attempt_type'))
             row.append(el.get('created_at'))
             row.append(passback_params.get('oauth_consumer_key'))
