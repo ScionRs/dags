@@ -9,10 +9,8 @@ DEFAULT_ARGS = {
     'owner': 'admin',
     'retries': 2,
     'retry_delay': 600,
-    'start_date': datetime(2024, 11, 5),
+    'start_date': datetime(2024, 11, 12),
 }
-
-API_URL = "https://b2b.itresume.ru/api/statistics"
 
 
 def upload_data(**context):
@@ -21,11 +19,11 @@ def upload_data(**context):
     import csv
     import boto3 as s3
     from botocore.client import Config
-    import codecs
 
     sql_query = f"""
         SELECT * FROM admin_agg_table
-        WHERE date = date_trunc('week', '{context['ds']}'::timestamp)::timestamp;
+        WHERE date >= '{context['ds']}'::timestamp 
+              AND date < '{context['ds']}'::timestamp + INTERVAL '1 days';
     """
 
     connection = BaseHook.get_connection('conn_pg')
@@ -47,10 +45,8 @@ def upload_data(**context):
 
     file = StringIO()
 
-    writer_wrapper = codecs.getwriter('utf-8')
-
     writer = csv.writer(
-        writer_wrapper(file),
+        file,
         delimiter='\t',
         lineterminator='\n',
         quotechar='"',
@@ -86,9 +82,10 @@ def combine_data(**context):
                attempt_type,
                COUNT(1),
                COUNT(CASE WHEN is_correct THEN NULL ELSE 1 END) AS attempt_failed_count,
-               date_trunc('week', '{context['ds']}'::timestamp)::timestamp
+               '{context['ds']}'::timestamp
           FROM admin_table
-         WHERE created_at >= date_trunc('week', '{context['ds']}'::timestamp) AND created_at < date_trunc('week', '{context['ds']}'::timestamp) + INTERVAL '7 days'
+         WHERE created_at >= '{context['ds']}'::timestamp 
+               AND created_at < '{context['ds']}'::timestamp + INTERVAL '1 days'
           GROUP BY lti_user_id, attempt_type;
     """
 
@@ -113,7 +110,7 @@ def combine_data(**context):
 with DAG(
     dag_id="combine_api_data",
     tags=['admin', '4'],
-    schedule='@weekly',
+    schedule='@daily',
     default_args=DEFAULT_ARGS,
     max_active_runs=1,
     max_active_tasks=1
