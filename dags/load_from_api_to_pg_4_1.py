@@ -19,6 +19,7 @@ def load_from_api(**context):
     import requests
     import pendulum
     import psycopg2 as pg
+    import ast
 
     payload = {
         'client': 'Skillfactory',
@@ -47,7 +48,7 @@ def load_from_api(**context):
 
         for el in data:
             row = []
-            passback_params = dict(el['passback_params'])
+            passback_params = ast.literal_eval(el['passback_params'])
             row.append(el['lti_user_id'])
             row.append(el['is_correct'])
             row.append(el['attempt_type'])
