@@ -15,10 +15,11 @@ DEFAULT_ARGS = {
 
 def upload_data(**context):
     import psycopg2 as pg
-    from io import StringIO
+    from io import BytesIO
     import csv
     import boto3 as s3
     from botocore.client import Config
+    import codecs
 
     sql_query = f"""
         SELECT * FROM admin_agg_table
@@ -43,10 +44,12 @@ def upload_data(**context):
         cursor.execute(sql_query)
         data = cursor.fetchall()
 
-    file = StringIO()
+    file = BytesIO()
+
+    writer_wrapper = codecs.getwriter('utf-8')
 
     writer = csv.writer(
-        file,
+        writer_wrapper(file),
         delimiter='\t',
         lineterminator='\n',
         quotechar='"',
@@ -67,7 +70,7 @@ def upload_data(**context):
     )
 
     s3_client.put_object(
-        Body=file,
+        Body=file.getbuffer(),
         Bucket='default-storage',
         Key=f"admin_{context['ds']}.csv"
     )
