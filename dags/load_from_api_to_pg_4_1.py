@@ -48,14 +48,14 @@ def load_from_api(**context):
 
         for el in data:
             row = []
-            passback_params = ast.literal_eval(el['passback_params'])
-            row.append(el['lti_user_id'])
-            row.append(el['is_correct'])
-            row.append(el['attempt_type'])
-            row.append(el['created_at'])
-            row.append(passback_params['oauth_consumer_key'])
-            row.append(passback_params['lis_result_sourcedid'])
-            row.append(passback_params['lis_outcome_service_url'])
+            passback_params = ast.literal_eval(el.get('passback_params', '{}'))
+            row.append(el.get('lti_user_id'))
+            row.append(el.get('is_correct'))
+            row.append(el.get('attempt_type'))
+            row.append(el.get('created_at'))
+            row.append(passback_params.get('oauth_consumer_key'))
+            row.append(passback_params.get('lis_result_sourcedid'))
+            row.append(passback_params.get('lis_outcome_service_url'))
 
             cursor.execute("INSERT INTO admin_table VALUES (%s, %s, %s, %s, %s, %s, %s)", row)
 
