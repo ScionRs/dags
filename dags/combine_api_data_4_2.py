@@ -70,7 +70,7 @@ def upload_data(**context):
     )
 
     s3_client.put_object(
-        Body=file.getbuffer(),
+        Body=file,
         Bucket='default-storage',
         Key=f"admin_{context['ds']}.csv"
     )
