@@ -15,7 +15,7 @@ class CustomBranchOperator(BaseOperator, SkipMixin):
 
         tasks_to_execute = []
 
-        if dt.weekday() in ['mon', 'fri', 'sun']:
+        if dt.weekday() in [0, 4, 6]:
             tasks_to_execute.append('load_from_api')
 
         valid_task_ids = set(context["dag"].task_ids)
