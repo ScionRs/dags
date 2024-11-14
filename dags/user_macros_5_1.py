@@ -129,7 +129,7 @@ def combine_data(week_start: str, week_end: str, **context):
 
 
 with DAG(
-    dag_id="combine_api_data",
+    dag_id="combine_api_data_weekly",
     tags=['admin', '4'],
     schedule='@weekly',
     default_args=DEFAULT_ARGS,
