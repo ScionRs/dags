@@ -5,7 +5,7 @@ from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.hooks.base import BaseHook
 
-from dags.operators.APIToPgOperator import APIToPgOperator
+from operators.APIToPgOperator import APIToPgOperator
 
 DEFAULT_ARGS = {
     'owner': 'admin',
