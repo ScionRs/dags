@@ -14,15 +14,15 @@ class APIToPgOperator(BaseOperator):
 
     def __init__(self, date_from: str, date_to: str, **kwargs):
         super().__init__(**kwargs)
-        self.__date_from = date_from
-        self.__date_to = date_to
+        self.date_from = date_from
+        self.date_to = date_to
 
     def execute(self, context):
         payload = {
             'client': 'Skillfactory',
             'client_key': 'M2MGWS',
-            'start': context['ds'],
-            'end': pendulum.parse(context['ds']).add(days=1).to_date_string(),
+            'start': self.date_from,
+            'end': self.date_to,
 
         }
         response = requests.get(self.API_URL, params=payload)
