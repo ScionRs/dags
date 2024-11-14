@@ -4,4 +4,4 @@ boto3==1.35.35
 pandas==2.2.3
 pendulum==3.0.0
 requests==2.31.0
-pydantic
+pydantic==2.6.4
