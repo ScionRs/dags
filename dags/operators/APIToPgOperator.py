@@ -10,7 +10,7 @@ from airflow.models.baseoperator import BaseOperator
 class APIToPgOperator(BaseOperator):
     API_URL = "https://b2b.itresume.ru/api/statistics"
 
-    template_fields = ('__date_from', '__date_to')
+    template_fields = ('date_from', 'date_to')
 
     def __init__(self, date_from: str, date_to: str, **kwargs):
         super().__init__(**kwargs)
