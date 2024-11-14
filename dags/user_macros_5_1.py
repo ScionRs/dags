@@ -103,7 +103,7 @@ def combine_data(week_start: str, week_end: str, **context):
                attempt_type,
                COUNT(1),
                COUNT(CASE WHEN is_correct THEN NULL ELSE 1 END) AS attempt_failed_count,
-               '{context['ds']}'::timestamp
+               '{week_start}'::timestamp
           FROM admin_table
          WHERE created_at >= '{week_start}'::timestamp 
                AND created_at < '{week_end}'::timestamp + INTERVAL '1 days'
