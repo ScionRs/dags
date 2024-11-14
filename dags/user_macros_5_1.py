@@ -9,7 +9,7 @@ DEFAULT_ARGS = {
     'owner': 'admin',
     'retries': 2,
     'retry_delay': 600,
-    'start_date': datetime(2024, 11, 4),
+    'start_date': datetime(2024, 11, 13),
 }
 
 
@@ -90,7 +90,7 @@ def upload_data(week_start: str, week_end: str, **context):
     s3_client.put_object(
         Body=file,
         Bucket='default-storage',
-        Key=f"admin_{week_start}.csv"
+        Key=f"admin_{week_start}_{context['ds']}.csv"
     )
 
 
@@ -131,7 +131,7 @@ def combine_data(week_start: str, week_end: str, **context):
 with DAG(
     dag_id="combine_api_data_weekly",
     tags=['admin', '4'],
-    schedule='@weekly',
+    schedule='@daily',
     default_args=DEFAULT_ARGS,
     max_active_runs=1,
     max_active_tasks=1,
