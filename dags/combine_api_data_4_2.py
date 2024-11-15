@@ -146,8 +146,8 @@ with DAG(
         sql=f"""
             SELECT COUNT(1)
               FROM admin_table
-             WHERE date >= '{{ ds }}'::timestamp
-              AND date < '{{ ds }}'::timestamp + INTERVAL '1 days';
+             WHERE created_at >= '{{ ds }}'::timestamp
+              AND created_at < '{{ ds }}'::timestamp + INTERVAL '1 days';
         """
     )
 
