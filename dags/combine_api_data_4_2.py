@@ -141,15 +141,15 @@ with DAG(
         poke_interval=300,
     )
 
-    # sql_sensor = SqlSensor(
-    #     task_id='sql_sensor',
-    #     sql=f"""
-    #         SELECT COUNT(1)
-    #           FROM admin_table
-    #          WHERE date >= '{{ ds }}'::timestamp
-    #           AND date < '{{ ds }}'::timestamp + INTERVAL '1 days';
-    #     """
-    # )
+    sql_sensor = SqlSensor(
+        task_id='sql_sensor',
+        sql=f"""
+            SELECT COUNT(1)
+              FROM admin_table
+             WHERE date >= '{{ ds }}'::timestamp
+              AND date < '{{ ds }}'::timestamp + INTERVAL '1 days';
+        """
+    )
 
     combine_data = PythonOperator(
         task_id='combine_data',
