@@ -7,8 +7,6 @@ from airflow.sensors.external_task import ExternalTaskSensor
 from airflow.sensors.time_delta import TimeDeltaSensor
 from airflow.hooks.base import BaseHook
 
-from sensors.sql_sensor import SqlSensor
-
 DEFAULT_ARGS = {
     'owner': 'admin',
     'retries': 2,
@@ -141,16 +139,6 @@ with DAG(
         poke_interval=300,
     )
 
-    sql_sensor = SqlSensor(
-        task_id='sql_sensor',
-        sql="""
-            SELECT COUNT(1)
-              FROM admin_table
-             WHERE created_at >= '{{ ds }}'::timestamp
-              AND created_at < '{{ ds }}'::timestamp + INTERVAL '1 days';
-        """
-    )
-
     combine_data = PythonOperator(
         task_id='combine_data',
         python_callable=combine_data,
@@ -161,5 +149,5 @@ with DAG(
         python_callable=upload_data,
     )
 
-    dag_start >> wait_3_msk >> dag_sensor >> sql_sensor >> \
+    dag_start >> wait_3_msk >> dag_sensor >> \
         combine_data >> upload_data >> dag_end
