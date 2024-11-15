@@ -47,7 +47,7 @@ def load_from_api(**context):
 
         for el in data:
             row = []
-            passback_params = ast.literal_eval(el.get('passback_params', '{}'))
+            passback_params = ast.literal_eval(el.get('passback_params') if el.get('passback_params') else '{}')
             row.append(el.get('lti_user_id'))
             row.append(True if el.get('is_correct') == 1 else False)
             row.append(el.get('attempt_type'))
