@@ -10,7 +10,7 @@ class SqlSensor(BaseSensorOperator):
         super().__init__(**kwargs)
         self.sql = sql
 
-    def poke(self,  context) -> bool:
+    def poke(self, context) -> bool:
         connection = BaseHook.get_connection('conn_pg')
 
         with pg.connect(
