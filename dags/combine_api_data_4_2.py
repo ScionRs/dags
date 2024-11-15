@@ -1,9 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
+from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.sensors.time_delta import TimeDeltaSensor
 from airflow.hooks.base import BaseHook
+
+from sensors.sql_sensor import SqlSensor
 
 DEFAULT_ARGS = {
     'owner': 'admin',
@@ -122,6 +126,31 @@ with DAG(
     dag_start = EmptyOperator(task_id='dag_start')
     dag_end = EmptyOperator(task_id='dag_end')
 
+    wait_3_msk = TimeDeltaSensor(
+        task_id='wait_3_msk',
+        delta=timedelta(hours=3),
+        mode='reschedule',
+        poke_interval=300,
+    )
+
+    dag_sensor = ExternalTaskSensor(
+        task_id='dag_sensor',
+        external_dag_id='load_from_api_to_pg_with_operator',
+        execution_delta=timedelta(minutes=0),
+        mode='reschedule',
+        poke_interval=300,
+    )
+
+    # sql_sensor = SqlSensor(
+    #     task_id='sql_sensor',
+    #     sql=f"""
+    #         SELECT COUNT(1)
+    #           FROM admin_table
+    #          WHERE date >= '{{ ds }}'::timestamp
+    #           AND date < '{{ ds }}'::timestamp + INTERVAL '1 days';
+    #     """
+    # )
+
     combine_data = PythonOperator(
         task_id='combine_data',
         python_callable=combine_data,
@@ -132,4 +161,5 @@ with DAG(
         python_callable=upload_data,
     )
 
-    dag_start >> combine_data >> upload_data >> dag_end
+    dag_start >> wait_3_msk >> dag_sensor >> sql_sensor >> \
+        combine_data >> upload_data >> dag_end
