@@ -161,5 +161,5 @@ with DAG(
         python_callable=upload_data,
     )
 
-    dag_start >> wait_3_msk >> dag_sensor >> sql_sensor >> \
+    dag_start >> wait_3_msk >> dag_sensor >> \
         combine_data >> upload_data >> dag_end
