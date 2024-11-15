@@ -5,7 +5,6 @@ from airflow.operators.empty import EmptyOperator
 
 from operators.api_to_pg_operator import APIToPgOperator
 from operators.custom_branch_operator import CustomBranchOperator
-from sensors.api_sensor import APISensor
 
 DEFAULT_ARGS = {
     'owner': 'admin',
@@ -31,18 +30,10 @@ with DAG(
         task_id='branch'
     )
 
-    sensor = APISensor(
-        task_id='api_sensor',
-        mode='reschedule',
-        poke_interval=300,
-        date_from='{{ ds }}',
-        date_to='{{ macros.ds_add(ds, 1) }}',
-    )
-
     load_from_api = APIToPgOperator(
         task_id='load_from_api',
         date_from='{{ ds }}',
         date_to='{{ macros.ds_add(ds, 1) }}',
     )
 
-    dag_start >> branch >> sensor >> load_from_api >> dag_end
+    dag_start >> branch >> load_from_api >> dag_end

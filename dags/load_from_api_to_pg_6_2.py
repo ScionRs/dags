@@ -4,6 +4,7 @@ from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 
 from operators.api_to_pg_operator import APIToPgOperator
+from sensors.api_sensor import APISensor
 
 DEFAULT_ARGS = {
     'owner': 'admin',
@@ -25,10 +26,18 @@ with DAG(
     dag_start = EmptyOperator(task_id='dag_start')
     dag_end = EmptyOperator(task_id='dag_end')
 
+    sensor = APISensor(
+        task_id='api_sensor',
+        mode='reschedule',
+        poke_interval=300,
+        date_from='{{ ds }}',
+        date_to='{{ macros.ds_add(ds, 1) }}',
+    )
+
     load_from_api = APIToPgOperator(
         task_id='load_from_api',
         date_from='{{ ds }}',
         date_to='{{ macros.ds_add(ds, 1) }}',
     )
 
-    dag_start >> load_from_api >> dag_end
+    dag_start >> sensor >> load_from_api >> dag_end
