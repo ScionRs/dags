@@ -143,7 +143,7 @@ with DAG(
 
     sql_sensor = SqlSensor(
         task_id='sql_sensor',
-        sql=f"""
+        sql="""
             SELECT COUNT(1)
               FROM admin_table
              WHERE created_at >= '{{ ds }}'::timestamp
