@@ -1,19 +1,18 @@
-from datetime import datetime
-import psycopg2 as pg
-from io import BytesIO
-import csv
-import boto3 as s3
-from botocore.client import Config
+import ast
 import codecs
+import csv
+from datetime import datetime
+from io import BytesIO
+
+import boto3 as s3
+import pendulum
 import psycopg2 as pg
+import requests
 from airflow import DAG
 from airflow.hooks.base import BaseHook
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
-import requests
-import pendulum
-import psycopg2 as pg
-import ast
+from botocore.client import Config
 
 DEFAULT_ARGS = {
     'owner': 'admin',
